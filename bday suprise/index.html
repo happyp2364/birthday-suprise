@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Happy Birthday Lugavdi ji 🎂</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { margin:0; padding:0; background: #fff5fd; font-family: 'Segoe UI', sans-serif; overflow:hidden;}
+    #start {
+      position:fixed; top:0; left:0; right:0; bottom:0; background:#fc6fa6;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      z-index:10;text-align:center;transition:opacity 0.6s;}
+    #start h1 {font-size:2.6rem;color:#fff;margin-bottom:1.5em;}
+    #start button {
+      padding:18px 40px;font-size:1.4rem;background:#fff;border:none;border-radius:40px;cursor:pointer;
+      color: #fc6fa6;font-weight:bold;box-shadow:0 5px 20px #f070a120;
+      transition:transform 0.2s;}
+    #start button:hover{ transform:scale(1.07);}
+    #confetti-canvas {position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:2;}
+    #main-content {display:none;position:relative;z-index:3;}
+    .birthday-text {font-size:2.3rem;font-weight:700;text-align:center;color:#fc6fa6;margin:44px 0 20px 0;
+      animation:bounce 2s;}
+    @keyframes bounce {0%{transform:scale(0.7)}60%{transform:scale(1.2)}100%{transform:scale(1)}}
+    .slideshow {display:flex;justify-content:center;align-items:center;}
+    .slideshow img {width:240px;height:300px;object-fit:cover;border-radius:20px;box-shadow:0 2px 30px #f370a133;transition:opacity 0.8s;}
+    #message {background:#fff0f7;font-size:1.1rem;color:#333;max-width:320px;margin:32px auto 0 auto;
+      padding:22px 20px;border-radius:30px;box-shadow:0 2px 24px #f070a120;}
+    #yt-audio {display:none;}
+    .blinking-heart {color:#f368a1;animation: pulse 0.8s infinite alternate;font-size:2em;}
+    @keyframes pulse { to { transform: scale(1.25); } }
+  </style>
+</head>
+<body>
+  <canvas id="confetti-canvas"></canvas>
+  <div id="start">
+    <h1>Tap to open your surprise <span class="blinking-heart">❤</span></h1>
+    <button onclick="openSurprise()">Open Now</button>
+  </div>
+  <div id="main-content">
+    <div class="birthday-text">Happy Birthday <span style="color:#ff3fa3;">Lugavdi ji</span>!</div>
+    <div class="slideshow">
+      <img id="slide-img" src="photo1.jpg" alt="Birthday Pic">
+    </div>
+    <div id="message"></div>
+    <div id="yt-audio">
+      <!-- YouTube embed for autoplay music -->
+      <iframe width="0" height="0"
+        src="https://www.youtube-nocookie.com/embed/aLEM852T29Q?autoplay=1&loop=1&playlist=aLEM852T29Q"
+        frameborder="0" allow="autoplay"></iframe>
+    </div>
+  </div>
+  <script>
+    function makeConfetti(){
+      const canvas=document.getElementById('confetti-canvas');
+      const ctx=canvas.getContext('2d');
+      let W=window.innerWidth, H=window.innerHeight;
+      canvas.width=W; canvas.height=H;
+      const maxp=120, particles=[];
+      for(let i=0;i<maxp;i++){
+        particles.push({
+          x:Math.random()*W, y:Math.random()*H, r:Math.random()*8+4,
+          d:Math.random()*maxp, color:hsla(${~~(230+100*Math.random())},70%,60%,0.85),
+          tilt:Math.random()*20-10, tiltAngle:0, tiltAngleInc:(Math.random()*0.08)+0.04
+        });
+      }
+      function draw(){
+        ctx.clearRect(0,0,W,H);
+        for(let i=0;i<maxp;i++){
+          let p=particles[i];
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2, false);
+          ctx.fillStyle=p.color;
+          ctx.fill();
+        }
+        update();
+      }
+      function update(){
+        for(let i=0;i<maxp;i++){
+          let p=particles[i];
+          p.y+=Math.cos(p.d)+2+p.r/3;
+          p.x+=Math.sin(p.d);
+          p.tiltAngle+=p.tiltAngleInc;
+          p.x+=Math.sin(p.tiltAngle)*1.2;
+          if(p.y>H){
+            p.x=Math.random()*W,p.y=-10, p.r=Math.random()*8+4;
+          }
+        }
+      }
+      setInterval(draw,18);
+      window.addEventListener('resize',()=>{W=window.innerWidth;H=window.innerHeight;canvas.width=W;canvas.height=H;});
+    }
+
+    const photos=["photo1.jpg","photo2.jpg","photo3.jpg","photo4.jpg","photo5.jpg","photo6.jpg"];
+    let slideIdx=0;
+    function startSlideshow(){
+      const img=document.getElementById('slide-img');
+      setInterval(()=>{
+        slideIdx=(slideIdx+1)%photos.length;
+        img.style.opacity=0;
+        setTimeout(()=>{img.src=photos[slideIdx]; img.style.opacity=1;},500);
+      },3000);
+    }
+
+    const message = "Happy Birthday My Dear Lugavdi Ji 😊, radharani aapki shari ichha puri kare or mera aasirvad hamesha aap par bana rahe 😛";
+    function typeEffect(txt,el,i=0){
+      if(i<=txt.length){
+        el.innerHTML=txt.slice(0,i)+"<span style='color:#fc6fa6;font-weight:bold;'>|</span>";
+        setTimeout(()=>typeEffect(txt,el,i+1),36+(Math.random()*45));
+      } else {
+        el.innerHTML=txt;
+      }
+    }
+
+    function openSurprise(){
+      document.getElementById('start').style.display='none';
+      document.getElementById('main-content').style.display='block';
+      document.getElementById('confetti-canvas').style.display='block';
+      document.body.style.overflow = 'auto';
+      setTimeout(makeConfetti,300);
+      startSlideshow();
+      typeEffect(message,document.getElementById('message'));
+      document.getElementById('yt-audio').style.display='block';
+    }
+  </script>
+</body>
+</html>
